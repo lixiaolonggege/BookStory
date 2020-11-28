@@ -1,20 +1,18 @@
 package com.lxl.web;
 
-import com.lxl.dao.BaseDao;
+
 import com.lxl.pojo.User;
 import com.lxl.service.Impl.UserServiceImpl;
 import com.lxl.service.UserService;
 import com.lxl.utils.WebUtils;
-import org.apache.commons.beanutils.BeanUtils;
+
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 public class UserServlet extends BaseServlet {
     private UserService userService=new UserServiceImpl();
@@ -30,7 +28,9 @@ public class UserServlet extends BaseServlet {
             }
         }else {
             try {
-                req.getRequestDispatcher("pages/user/login_success.html").forward(req,resp);
+                HttpSession session = req.getSession();
+                session.setAttribute("user",user);
+                req.getRequestDispatcher("pages/user/login_success.jsp").forward(req,resp);
             } catch (ServletException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -50,9 +50,13 @@ public class UserServlet extends BaseServlet {
         String email = req.getParameter("email");
         String  code= req.getParameter("code");
 
+        //获取kaptcha生成的验证码
+        HttpSession session = req.getSession();
+        String kaptcha_session_key = (String)session.getAttribute("KAPTCHA_SESSION_KEY");
+
         User u =  WebUtils.paramsToBean(new User(),req.getParameterMap());
         //检测验证码  验证码写死为abcde
-        if(code.equals("abcde")){
+        if(code.equals(kaptcha_session_key)){
             //检查用户名是否可用
             if(userService.userIsExist(username)){
                 System.out.println("用户名不可用！");
@@ -64,7 +68,7 @@ public class UserServlet extends BaseServlet {
             }else {
                 userService.regist(new User(username,password,email));
                 try {
-                    req.getRequestDispatcher("/pages/user/regist_success.html").forward(req,resp);
+                    req.getRequestDispatcher("/pages/user/regist_success.jsp").forward(req,resp);
                 } catch (ServletException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -81,6 +85,14 @@ public class UserServlet extends BaseServlet {
         }
     }
 
+    public void logout(HttpServletRequest req,HttpServletResponse resp){
+        req.getSession().invalidate();
+        try {
+            resp.sendRedirect(req.getContextPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

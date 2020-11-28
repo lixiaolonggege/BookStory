@@ -4,10 +4,19 @@
 <head>
 <meta charset="UTF-8">
 <title>书城首页</title>
+	<base href="http://localhost:8080/Book_war_exploded/">
 <link type="text/css" rel="stylesheet" href="static/css/style.css" >
 	<link type="text/css" rel="stylesheet" href="static/css/style.css" >
 	<script type="text/javascript" src="static/js/jquery.min.js"></script>
 
+	<script type="text/javascript">
+		$(function () {
+			$("button.addToCart").click(function () {
+
+				location.href="http://localhost:8080/Book_war_exploded/cartServlet?action=addItem&id="+this.id;
+			})
+		})
+	</script>
 </head>
 <body>
 	
@@ -15,10 +24,22 @@
 			<!--<img class="logo_img" alt="" src="static/img/logo.gif" >-->
 			<span class="wel_word">网上书城</span>
 			<div>
-				<a href="pages/user/login.html">登录</a>
-				<a href="pages/user/regist.html">注册</a> &nbsp;&nbsp;
-				<a href="pages/cart/cart.html">购物车</a>
-				<a href="pages/manager/manager.html">后台管理</a>
+				<c:if test="${empty sessionScope.user}">
+					<a href="pages/user/login.html">登录</a>
+					<a href="pages/user/regist.html">注册</a>
+					<a href="pages/manager/manager.html">后台管理</a>
+				</c:if>&nbsp;&nbsp;
+				<c:if test="${not empty sessionScope.user}">
+					<div>
+						<span>欢迎<span class="um_span">${sessionScope.user.username}</span>光临书城</span>
+						<a href="pages/cart/cart.jsp">购物车</a>
+						<a href="pages/manager/manager.html">后台管理</a>
+						<a href="pages/order/order.jsp">我的订单</a>
+						<a href="userServlet?action=logout">注销</a>&nbsp;&nbsp;
+						<a href="index.jsp">返回</a>
+					</div>
+				</c:if>
+
 			</div>
 	</div>
 	<div id="main">
@@ -32,10 +53,17 @@
 				</form>
 			</div>
 			<div style="text-align: center">
-				<span>您的购物车中有3件商品</span>
-				<div>
-					您刚刚将<span style="color: red">时间简史</span>加入到了购物车中
-				</div>
+				<c:if test="${not empty sessionScope.user}">
+					<c:if test="${empty sessionScope.cart.items}">
+						<span>您的购物车中有0件商品</span>
+					</c:if>
+					<c:if test="${not empty sessionScope.cart.items}">
+						<span>您的购物车中有${sessionScope.cart.totalCount}件商品</span>
+						<div>
+							您刚刚将<span style="color: red">${sessionScope.lastName}</span>加入到了购物车中
+						</div>
+					</c:if>
+				</c:if>
 			</div>
 			<c:forEach items="${requestScope.page.items}" var="book">
 				<div class="b_list">
@@ -63,9 +91,11 @@
 							<span class="sp1">库存:</span>
 							<span class="sp2">${book.stock}</span>
 						</div>
-						<div class="book_add">
-							<button>加入购物车</button>
-						</div>
+						<c:if test="${not empty sessionScope.user}">
+							<div class="book_add">
+								<button class="addToCart" id="${book.id}"">加入购物车</button>
+							</div>
+						</c:if>
 					</div>
 				</div>
 			</c:forEach>

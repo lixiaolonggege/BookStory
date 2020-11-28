@@ -1,8 +1,6 @@
 package com.lxl.utils;
 
 import org.apache.commons.beanutils.BeanUtils;
-
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 

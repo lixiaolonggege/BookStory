@@ -4,7 +4,42 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  <filter>
+    <filter-name>managerFilter</filter-name>
+    <filter-class>com.lxl.filter.ManagerFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>managerFilter</filter-name>
+    <url-pattern>/pages/manager/*</url-pattern>
+    <url-pattern>/manager/bookServlet</url-pattern>
+  </filter-mapping>
 
+  <filter>
+    <filter-name>transactionFilter</filter-name>
+    <filter-class>com.lxl.filter.TransactionFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>transactionFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <servlet>
+    <servlet-name>kaptchaServelt</servlet-name>
+    <servlet-class>com.google.code.kaptcha.servlet.KaptchaServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>kaptchaServelt</servlet-name>
+    <url-pattern>/kaptcha</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>orderServlet</servlet-name>
+    <servlet-class>com.lxl.web.OrderServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>orderServlet</servlet-name>
+    <url-pattern>/orderServlet</url-pattern>
+  </servlet-mapping>
 
   <servlet>
     <servlet-name>uploadServlet</servlet-name>
@@ -15,6 +50,14 @@
     <url-pattern>/uploadServlet</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>cartServlet</servlet-name>
+    <servlet-class>com.lxl.web.CartServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>cartServlet</servlet-name>
+    <url-pattern>/cartServlet</url-pattern>
+  </servlet-mapping>
   <servlet>
     <servlet-name>userServlet</servlet-name>
     <servlet-class>com.lxl.web.UserServlet</servlet-class>
@@ -54,4 +97,11 @@
     <servlet-name>clientServlet</servlet-name>
     <url-pattern>/clientServlet</url-pattern>
   </servlet-mapping>
+
+
+  //服务器出错后，指定跳转错误页面
+  <error-page>
+    <error-code>500</error-code>
+    <location>/pages/error/error500.jsp</location>
+  </error-page>
 </web-app>

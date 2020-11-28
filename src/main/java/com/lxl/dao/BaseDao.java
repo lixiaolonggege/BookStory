@@ -1,7 +1,5 @@
 package com.lxl.dao;
 
-import com.alibaba.druid.stat.JdbcDataSourceStat;
-import com.lxl.pojo.User;
 import com.lxl.utils.JdbcUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -20,10 +18,8 @@ public abstract class BaseDao {
             return qr.update(conn,sql,params);
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            JdbcUtils.close(conn);
+            throw new RuntimeException();
         }
-        return -1;
     }
 
     public<T> T queryOne(Class<T> type, String sql, Object... params){
@@ -32,10 +28,8 @@ public abstract class BaseDao {
             return qr.query(conn,sql,new BeanHandler<T>(type),params);
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            JdbcUtils.close(conn);
+            throw new RuntimeException();
         }
-        return null;
     }
 
     public<T> List<T> query(Class<T> type, String sql, Object... params){
@@ -44,10 +38,8 @@ public abstract class BaseDao {
             return qr.query(conn,sql,new BeanListHandler<T>(type),params);
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            JdbcUtils.close(conn);
+            throw new RuntimeException();
         }
-        return null;
     }
 
     public Object querySingleVal(String sql,Object... params){
@@ -56,9 +48,7 @@ public abstract class BaseDao {
             return qr.query(conn,sql,new ScalarHandler(),params);
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
-            JdbcUtils.close(conn);
+            throw new RuntimeException();
         }
-        return null;
     }
 }
