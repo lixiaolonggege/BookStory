@@ -9,6 +9,20 @@
 		<script type="text/javascript">
 			// 页面加载完成之后
 			$(function () {
+				$("#username").blur(function () {
+					//1.获取用户名
+					var username=this.value;
+					$.getJSON("http://localhost:8080/Book_war_exploded/userServlet","action=ajaxExistUsername&username="+username,function (msg) {
+						if(msg.nameIsExist){
+							$("span.errorMsg").text("用户名已存在！");
+						}else {
+							$("span.errorMsg").text("用户名可用")
+
+						}
+					});
+
+				});
+
 				$("#code_img").click(function () {
 					this.src="http://localhost:8080/Book_war_exploded/kaptcha?d="+new Date();
 				});
@@ -119,7 +133,7 @@
 							<div class="form">
 								<form action="userServlet" method="post">
 									<input type="hidden" name="action" value="regist"/>
-									<label>用户名称：</label>
+									<label>用户名称：
 									<input class="itxt" type="text" placeholder="请输入用户名"
 										   autocomplete="off" tabindex="1" name="username" id="username" />
 									<br />

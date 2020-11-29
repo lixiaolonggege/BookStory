@@ -1,6 +1,7 @@
 package com.lxl.web;
 
 
+import com.google.gson.Gson;
 import com.lxl.pojo.User;
 import com.lxl.service.Impl.UserServiceImpl;
 import com.lxl.service.UserService;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserServlet extends BaseServlet {
     private UserService userService=new UserServiceImpl();
@@ -55,7 +58,7 @@ public class UserServlet extends BaseServlet {
         String kaptcha_session_key = (String)session.getAttribute("KAPTCHA_SESSION_KEY");
 
         User u =  WebUtils.paramsToBean(new User(),req.getParameterMap());
-        //检测验证码  验证码写死为abcde
+        //检测验证码
         if(code.equals(kaptcha_session_key)){
             //检查用户名是否可用
             if(userService.userIsExist(username)){
@@ -89,6 +92,23 @@ public class UserServlet extends BaseServlet {
         req.getSession().invalidate();
         try {
             resp.sendRedirect(req.getContextPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void ajaxExistUsername(HttpServletRequest req,HttpServletResponse resp){
+        //获取username
+        String username = req.getParameter("username");
+        boolean nameIsExist = userService.userIsExist(username);
+        Map<String,Boolean> resultMap=new HashMap<>();
+        resultMap.put("nameIsExist",nameIsExist);
+
+        Gson gson=new Gson();
+        String json = gson.toJson(resultMap);
+
+        try {
+            resp.getWriter().write(json);
         } catch (IOException e) {
             e.printStackTrace();
         }

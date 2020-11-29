@@ -13,7 +13,12 @@
 		$(function () {
 			$("button.addToCart").click(function () {
 
-				location.href="http://localhost:8080/Book_war_exploded/cartServlet?action=addItem&id="+this.id;
+				//location.href="http://localhost:8080/Book_war_exploded/cartServlet?action=addItem&id="+this.id;
+				var bookId=$(this).attr("id");
+				$.getJSON("http://localhost:8080/Book_war_exploded/cartServlet","action=addItemAjax&id="+bookId,function (msg) {
+					$("#cartTotalCount").text("您的购物车中有"+msg.totalCount+"件商品");
+					$("#cartLastName").text(msg.lastName);
+				})
 			})
 		})
 	</script>
@@ -53,16 +58,19 @@
 				</form>
 			</div>
 			<div style="text-align: center">
-				<c:if test="${not empty sessionScope.user}">
-					<c:if test="${empty sessionScope.cart.items}">
-						<span>您的购物车中有0件商品</span>
-					</c:if>
-					<c:if test="${not empty sessionScope.cart.items}">
-						<span>您的购物车中有${sessionScope.cart.totalCount}件商品</span>
-						<div>
-							您刚刚将<span style="color: red">${sessionScope.lastName}</span>加入到了购物车中
-						</div>
-					</c:if>
+				<c:if test="${empty sessionScope.cart.items}">
+					<%--购物车为空的输出--%>
+					<span id="cartTotalCount"> </span>
+					<div>
+						<span style="color: red" id="cartLastName">当前购物车为空</span>
+					</div>
+				</c:if>
+				<c:if test="${not empty sessionScope.cart.items}">
+					<%--购物车非空的输出--%>
+					<span id="cartTotalCount">您的购物车中有 ${sessionScope.cart.totalCount} 件商品</span>
+					<div>
+						您刚刚将<span style="color: red" id="cartLastName">${sessionScope.lastName}</span>加入到了购物车中
+					</div>
 				</c:if>
 			</div>
 			<c:forEach items="${requestScope.page.items}" var="book">

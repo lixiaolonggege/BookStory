@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 public abstract class BaseServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp){
+        resp.setContentType("text/html;charset=utf-8");
         String action = req.getParameter("action");
         try {
             Method method = this.getClass().getMethod(action,HttpServletRequest.class,HttpServletResponse.class);
